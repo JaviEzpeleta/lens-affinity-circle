@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import "./globals.css"
+import { ThemeProvider } from "@/components/ThemeProvider"
 
 const title = "Circle of Affinity — Lens"
 const description =
@@ -35,7 +36,10 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#07060d",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f6fc" },
+    { media: "(prefers-color-scheme: dark)", color: "#07060d" },
+  ],
   width: "device-width",
   initialScale: 1,
 }
@@ -46,8 +50,17 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="font-sans antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

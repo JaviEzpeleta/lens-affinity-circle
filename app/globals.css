@@ -1,17 +1,58 @@
 @import "tailwindcss";
 
 /*
- * Circle of Affinity — a refined, cosmic dark theme.
- * The whole app commits to dark since the graph itself lives on a near-black
- * canvas; everything else is tuned to sit around it without fighting for
- * attention.
+ * Circle of Affinity — theme-aware cosmic palette.
+ *
+ * next-themes toggles `class="dark"` / `class="light"` on <html> based on the
+ * OS preference. Light is the :root default; `.dark` overrides the surfaces and
+ * text. The brand gradient (amber→rose→violet→cyan) is shared by both themes.
+ *
+ * The graph itself sits on its own permanently-dark "stage" (the circle page
+ * pins `class="dark"` on that card), so the bright nodes always pop and the
+ * exported PNG looks the same regardless of the viewer's theme.
  */
 
 @theme {
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
+  --radius-xl2: 1.25rem;
+}
 
-  /* Surfaces */
+:root {
+  color-scheme: light;
+
+  /* Brand — the affinity gradient, identical in both themes */
+  --color-violet: #8b5cf6;
+  --color-violet-deep: #7c3aed;
+  --color-cyan: #0891b2;
+  --color-amber: #f59e0b;
+  --color-rose: #fb7185;
+
+  /* Light surfaces */
+  --color-void: #f7f6fc;
+  --color-abyss: #efedf9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f3f1fb;
+  --color-border: #e2ddf1;
+  --color-border-soft: #ebe8f6;
+
+  /* Light text */
+  --color-ink: #17131f;
+  --color-ink-soft: #423b57;
+  --color-ink-muted: #6f6790;
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Brand pops a touch brighter on dark */
+  --color-violet: #a78bfa;
+  --color-violet-deep: #7c3aed;
+  --color-cyan: #22d3ee;
+  --color-amber: #fbbf24;
+  --color-rose: #fb7185;
+
+  /* Dark surfaces */
   --color-void: #07060d;
   --color-abyss: #0c0a17;
   --color-surface: #14111f;
@@ -19,23 +60,10 @@
   --color-border: #2a2540;
   --color-border-soft: #211d33;
 
-  /* Text */
+  /* Dark text */
   --color-ink: #f5f3ff;
   --color-ink-soft: #c4bfe0;
   --color-ink-muted: #8b84ad;
-
-  /* Brand — the affinity gradient */
-  --color-violet: #a78bfa;
-  --color-violet-deep: #7c3aed;
-  --color-cyan: #22d3ee;
-  --color-amber: #fbbf24;
-  --color-rose: #fb7185;
-
-  --radius-xl2: 1.25rem;
-}
-
-:root {
-  color-scheme: dark;
 }
 
 html,
@@ -48,15 +76,23 @@ body {
 
 body {
   min-height: 100dvh;
-  /* Soft aurora glow behind everything */
+  background-attachment: fixed;
+  /* Soft aurora — gentle wash on light */
+  background-image:
+    radial-gradient(60% 50% at 15% 0%, rgba(124, 58, 237, 0.1), transparent 70%),
+    radial-gradient(55% 45% at 92% 8%, rgba(8, 145, 178, 0.08), transparent 70%),
+    radial-gradient(70% 60% at 50% 110%, rgba(251, 113, 133, 0.06), transparent 70%);
+}
+
+.dark body {
+  /* Richer aurora on the dark void */
   background-image:
     radial-gradient(60% 50% at 15% 0%, rgba(124, 58, 237, 0.18), transparent 70%),
     radial-gradient(55% 45% at 92% 8%, rgba(34, 211, 238, 0.12), transparent 70%),
     radial-gradient(70% 60% at 50% 110%, rgba(251, 113, 133, 0.08), transparent 70%);
-  background-attachment: fixed;
 }
 
-/* Thin, unobtrusive scrollbars that match the theme */
+/* Thin, theme-matched scrollbars */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
@@ -70,7 +106,7 @@ body {
   border-radius: 999px;
 }
 
-/* Utility: the signature gradient text */
+/* Signature gradient text */
 .text-affinity-gradient {
   background: linear-gradient(
     100deg,
@@ -85,18 +121,25 @@ body {
   color: transparent;
 }
 
-/* Glassy panel */
+/* Glassy panel — light by default, deep on dark */
 .panel {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.72),
+    rgba(243, 241, 251, 0.6)
+  );
+  border: 1px solid var(--color-border-soft);
+  backdrop-filter: blur(12px);
+}
+.dark .panel {
   background: linear-gradient(
     180deg,
     rgba(28, 24, 48, 0.7),
     rgba(20, 17, 31, 0.7)
   );
-  border: 1px solid var(--color-border-soft);
-  backdrop-filter: blur(12px);
 }
 
-/* Subtle rising animation for content */
+/* Content entrance */
 @keyframes rise {
   from {
     opacity: 0;

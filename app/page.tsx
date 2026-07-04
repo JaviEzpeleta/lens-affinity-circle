@@ -19,8 +19,8 @@ function OrbitMotif() {
             <stop offset="100%" stopColor="#0891b2" />
           </radialGradient>
         </defs>
-        <circle cx="70" cy="70" r="44" fill="none" stroke="#2a2540" strokeWidth="1" strokeDasharray="2 6" />
-        <circle cx="70" cy="70" r="62" fill="none" stroke="#2a2540" strokeWidth="1" strokeDasharray="2 6" />
+        <circle cx="70" cy="70" r="44" fill="none" stroke="var(--color-border)" strokeWidth="1" strokeDasharray="2 6" />
+        <circle cx="70" cy="70" r="62" fill="none" stroke="var(--color-border)" strokeWidth="1" strokeDasharray="2 6" />
         <line x1="70" y1="70" x2="114" y2="52" stroke="#a78bfa" strokeWidth="1" strokeOpacity="0.3" />
         <line x1="70" y1="70" x2="30" y2="96" stroke="#22d3ee" strokeWidth="1" strokeOpacity="0.3" />
         <line x1="70" y1="70" x2="96" y2="118" stroke="#fb7185" strokeWidth="1" strokeOpacity="0.3" />

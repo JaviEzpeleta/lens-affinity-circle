@@ -33,9 +33,13 @@ so repeated lookups for the same handle are essentially free.
 ## Tech
 
 - **Next.js 15** (App Router) + **React 19** + **TypeScript**
-- **Tailwind CSS v4**
+- **Tailwind CSS v4** + **next-themes** (follows the OS light/dark setting)
 - **D3** force simulation
 - **Lens GraphQL API** (public, no credentials)
+
+The graph itself renders on a permanently-dark "stage" in both themes, so the
+nodes always pop and the exported PNG looks identical regardless of the viewer's
+system preference.
 
 ## Run it
 

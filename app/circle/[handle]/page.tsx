@@ -149,9 +149,11 @@ export default function CirclePage({
       {status === "ok" && data && (
         <div className="space-y-6">
           {/* Shareable card: header + graph */}
+          {/* `dark` pins this card to the dark palette regardless of page theme
+              — the graph is a dark "stage" and the exported PNG stays consistent. */}
           <div
             ref={captureRef}
-            className="overflow-hidden rounded-3xl border border-[var(--color-border-soft)] bg-gradient-to-b from-[var(--color-abyss)] to-[var(--color-void)] p-5 sm:p-7"
+            className="dark overflow-hidden rounded-3xl border border-[var(--color-border-soft)] bg-gradient-to-b from-[var(--color-abyss)] to-[var(--color-void)] p-5 sm:p-7"
           >
             <ProfileHeader data={data} />
             <div ref={graphWrapRef} className="mt-4 flex justify-center">
