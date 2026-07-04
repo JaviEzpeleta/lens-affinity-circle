@@ -13,7 +13,7 @@ reposts** the most over their last 90 days of activity.
 
 ## How it works
 
-1. You enter a Lens handle (e.g. `stani`, `javiezpe`).
+1. You enter a Lens handle (e.g. `kipto`, `0xjavi`).
 2. A single cached **POST `/api/circle`** route resolves the account and pages
    through its recent posts using the **public Lens GraphQL API**
    (`api.lens.xyz/graphql` — no auth needed).
@@ -54,12 +54,12 @@ mainnet GraphQL endpoint out of the box.
 
 ## Configuration
 
-| What | Where |
-| --- | --- |
-| Lens endpoint / network | `lib/lens.ts` (`LENS_ENDPOINT`) |
-| Days of history analysed | `lib/lens.ts` (`DAYS_TO_ANALYZE`) |
-| Cache duration | `lib/lens.ts` (`CACHE_TTL_SECONDS`) |
-| Max friends in the circle | `lib/lens.ts` (`MAX_FRIENDS`) |
+| What                      | Where                               |
+| ------------------------- | ----------------------------------- |
+| Lens endpoint / network   | `lib/lens.ts` (`LENS_ENDPOINT`)     |
+| Days of history analysed  | `lib/lens.ts` (`DAYS_TO_ANALYZE`)   |
+| Cache duration            | `lib/lens.ts` (`CACHE_TTL_SECONDS`) |
+| Max friends in the circle | `lib/lens.ts` (`MAX_FRIENDS`)       |
 
 ## Project layout
 
