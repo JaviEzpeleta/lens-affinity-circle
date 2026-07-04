@@ -202,7 +202,7 @@ function ProfileHeader({ data }: { data: CircleData }) {
           </h2>
         )}
         <a
-          href={`https://hey.xyz/u/${profile.handle}`}
+          href={`https://palus.app/u/${profile.handle}`}
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-1 text-sm text-[var(--color-violet)] hover:underline"
