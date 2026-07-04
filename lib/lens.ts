@@ -88,6 +88,9 @@ export function sanitizeHandle(input: string): string {
     .replace(/^@/, "")
     .replace(/^lens\//, "")
     .replace(/[^a-z0-9_.-]/g, "")
+    // A handle can't start or end with a separator — strip trailing sentence
+    // punctuation like the "." in "@lens/0xjavi." at the end of a sentence.
+    .replace(/^[._-]+|[._-]+$/g, "")
     .slice(0, 60)
 }
 
@@ -105,7 +108,16 @@ function extractHandles(content: string | null | undefined): string[] {
   if (!content) return []
   const matches = content.match(/@lens\/([a-z0-9_.-]+)/gi)
   if (!matches) return []
-  return matches.map((m) => m.replace(/@lens\//i, "").toLowerCase())
+  return matches
+    .map((m) =>
+      m
+        .replace(/@lens\//i, "")
+        .toLowerCase()
+        // Trailing "." / "-" / "_" is sentence punctuation, not part of the
+        // handle — "@lens/0xjavi." must resolve to "0xjavi".
+        .replace(/^[._-]+|[._-]+$/g, "")
+    )
+    .filter(Boolean)
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
