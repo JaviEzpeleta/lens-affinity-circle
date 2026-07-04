@@ -11,7 +11,6 @@ import {
   Sparkles,
   FileText,
   CalendarRange,
-  ExternalLink,
 } from "lucide-react"
 import type { CircleData } from "@/lib/lens"
 import { proxied, initial } from "@/lib/image"
@@ -203,15 +202,39 @@ function ProfileHeader({ data }: { data: CircleData }) {
             {profile.name}
           </h2>
         )}
-        <a
-          href={`https://palus.app/u/${profile.handle}`}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1 text-sm text-[var(--color-violet)] hover:underline"
-        >
-          @{profile.handle}
-          <ExternalLink className="h-3 w-3" />
-        </a>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-[var(--color-violet)]">
+            @{profile.handle}
+          </span>
+          {/* View this profile on the two main Lens clients — the Lensie pattern. */}
+          <a
+            href={`https://palus.app/u/${profile.handle}`}
+            target="_blank"
+            rel="noreferrer"
+            title="View on Palus"
+            aria-label="View on Palus"
+            className="grayscale transition hover:scale-110 hover:grayscale-0 active:scale-95"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logos/palus.svg" alt="Palus" draggable={false} className="h-4 w-4" />
+          </a>
+          <a
+            href={`https://orb.club/@${profile.handle}`}
+            target="_blank"
+            rel="noreferrer"
+            title="View on Orb"
+            aria-label="View on Orb"
+            className="grayscale transition hover:scale-110 hover:grayscale-0 active:scale-95"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logos/orb-logo.jpg"
+              alt="Orb"
+              draggable={false}
+              className="h-4 w-4 rounded-[3px]"
+            />
+          </a>
+        </div>
         <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-[var(--color-ink-muted)]">
           <span>
             <b className="text-[var(--color-ink-soft)]">{formatNum(profile.stats.followers)}</b> followers
