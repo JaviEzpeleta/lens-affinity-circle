@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/*
+ * Circle of Affinity — a refined, cosmic dark theme.
+ * The whole app commits to dark since the graph itself lives on a near-black
+ * canvas; everything else is tuned to sit around it without fighting for
+ * attention.
+ */
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+
+  /* Surfaces */
+  --color-void: #07060d;
+  --color-abyss: #0c0a17;
+  --color-surface: #14111f;
+  --color-surface-2: #1c1830;
+  --color-border: #2a2540;
+  --color-border-soft: #211d33;
+
+  /* Text */
+  --color-ink: #f5f3ff;
+  --color-ink-soft: #c4bfe0;
+  --color-ink-muted: #8b84ad;
+
+  /* Brand — the affinity gradient */
+  --color-violet: #a78bfa;
+  --color-violet-deep: #7c3aed;
+  --color-cyan: #22d3ee;
+  --color-amber: #fbbf24;
+  --color-rose: #fb7185;
+
+  --radius-xl2: 1.25rem;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: var(--color-void);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100dvh;
+  /* Soft aurora glow behind everything */
+  background-image:
+    radial-gradient(60% 50% at 15% 0%, rgba(124, 58, 237, 0.18), transparent 70%),
+    radial-gradient(55% 45% at 92% 8%, rgba(34, 211, 238, 0.12), transparent 70%),
+    radial-gradient(70% 60% at 50% 110%, rgba(251, 113, 133, 0.08), transparent 70%);
+  background-attachment: fixed;
+}
+
+/* Thin, unobtrusive scrollbars that match the theme */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
+
+/* Utility: the signature gradient text */
+.text-affinity-gradient {
+  background: linear-gradient(
+    100deg,
+    var(--color-amber),
+    var(--color-rose) 35%,
+    var(--color-violet) 70%,
+    var(--color-cyan)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Glassy panel */
+.panel {
+  background: linear-gradient(
+    180deg,
+    rgba(28, 24, 48, 0.7),
+    rgba(20, 17, 31, 0.7)
+  );
+  border: 1px solid var(--color-border-soft);
+  backdrop-filter: blur(12px);
+}
+
+/* Subtle rising animation for content */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-rise {
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-float-slow {
+    animation: none;
+  }
+}
