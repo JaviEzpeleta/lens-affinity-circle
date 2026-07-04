@@ -8,10 +8,20 @@ reposts** the most over their last 90 days of activity.
 > credential-free app. No login, no wallet, no database.
 
 <p align="center">
-  <img src="docs/circle-agentino.png" alt="Circle of Affinity for @agentino — the account at the center with its closest connections orbiting, node size scaled by affinity" width="760">
+  <a href="https://lens-affinity-circle.vercel.app"><b>▲&nbsp; Live demo</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://lens-affinity-circle.vercel.app/circle/agentino">@agentino's&nbsp;circle</a>
+  &nbsp;·&nbsp;
+  <a href="https://lens-affinity-circle.vercel.app/circle/sydney_bro">@sydney_bro's&nbsp;circle</a>
+</p>
+
+<p align="center">
+  <a href="https://lens-affinity-circle.vercel.app">
+    <img src="docs/circle-agentino.png" alt="Circle of Affinity for @agentino — the account at the center with its closest connections orbiting, node size scaled by affinity" width="760">
+  </a>
 </p>
 <p align="center">
-  <sub><em>@agentino's circle — the account at the center, friends orbiting, node size = affinity.</em></sub>
+  <sub><em>@agentino's circle — the account at the center, friends orbiting, node size = affinity. <a href="https://lens-affinity-circle.vercel.app/circle/agentino">Try it live&nbsp;→</a></em></sub>
 </p>
 
 ## A handle in, a circle out
@@ -60,6 +70,10 @@ nodes always pop and the exported PNG looks identical regardless of the viewer's
 system preference.
 
 ## Run it
+
+Not into cloning? Just open the **[live demo](https://lens-affinity-circle.vercel.app)**.
+
+To run it locally:
 
 ```bash
 npm install
