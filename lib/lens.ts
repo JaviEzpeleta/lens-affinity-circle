@@ -13,8 +13,13 @@
 /** Public Lens mainnet GraphQL endpoint. Testnet: api.testnet.lens.xyz/graphql */
 export const LENS_ENDPOINT = "https://api.lens.xyz/graphql"
 
-/** How far back to look for affinity signals. */
-export const DAYS_TO_ANALYZE = 30
+/**
+ * How far back to look for affinity signals. 90 days keeps the window "recent"
+ * while giving the circle enough friends to feel alive — most active accounts
+ * yield 15–30 friends at 90d vs. just a handful at 30d. The window is anchored
+ * to the account's most recent post (see tallyAffinity), not the wall clock.
+ */
+export const DAYS_TO_ANALYZE = 90
 
 /** How long a computed circle stays cached (seconds). 24h = heavily cached. */
 export const CACHE_TTL_SECONDS = 60 * 60 * 24
@@ -300,17 +305,22 @@ interface PostsQueryResult {
 /**
  * Returns a map of handle -> mention count, plus how many posts were scanned.
  * "Affinity" = comment target + repost target + quote target + @-mentions in text.
+ *
+ * The window is anchored to the account's MOST RECENT post rather than the wall
+ * clock: for an active account that's identical to "the last 30 days", but for a
+ * dormant one it surfaces their most recent 30 days of activity instead of an
+ * empty circle. Anchor is capped at "now" so future timestamps can't widen it.
  */
 async function tallyAffinity(
   address: string,
   selfHandle: string
 ): Promise<{ counts: Map<string, number>; postsAnalyzed: number }> {
-  const cutoff = Date.now() - DAYS_TO_ANALYZE * 24 * 60 * 60 * 1000
   const counts = new Map<string, number>()
 
   let cursor: string | null = null
   let page = 0
   let postsAnalyzed = 0
+  let cutoff: number | null = null
 
   const bump = (handle: string | undefined | null) => {
     if (!handle) return
@@ -328,7 +338,13 @@ async function tallyAffinity(
     const items = data.posts?.items ?? []
     if (items.length === 0) break
 
-    const recent = items.filter((p) => new Date(p.timestamp).getTime() >= cutoff)
+    // Anchor the window to the newest post the first time we see data.
+    if (cutoff === null) {
+      const newest = Math.min(Date.now(), new Date(items[0].timestamp).getTime())
+      cutoff = newest - DAYS_TO_ANALYZE * 24 * 60 * 60 * 1000
+    }
+
+    const recent = items.filter((p) => new Date(p.timestamp).getTime() >= cutoff!)
 
     for (const post of recent) {
       postsAnalyzed++
