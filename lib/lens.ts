@@ -87,10 +87,11 @@ export function sanitizeHandle(input: string): string {
     .toLowerCase()
     .replace(/^@/, "")
     .replace(/^lens\//, "")
-    .replace(/[^a-z0-9_.-]/g, "")
-    // A handle can't start or end with a separator — strip trailing sentence
-    // punctuation like the "." in "@lens/0xjavi." at the end of a sentence.
-    .replace(/^[._-]+|[._-]+$/g, "")
+    // Lens local names are [a-z0-9_-]; a dot is NOT a valid handle char, so we
+    // drop it (this also swallows a trailing sentence "." like "0xjavi."). We
+    // deliberately KEEP underscores/hyphens, including trailing ones — handles
+    // such as "kofi_" and "nenx_" are real.
+    .replace(/[^a-z0-9_-]/g, "")
     .slice(0, 60)
 }
 
@@ -106,17 +107,14 @@ export function normalizeAvatarUrl(url: string | null | undefined): string | nul
 /** Pull `@lens/handle` mentions out of post text. */
 function extractHandles(content: string | null | undefined): string[] {
   if (!content) return []
-  const matches = content.match(/@lens\/([a-z0-9_.-]+)/gi)
+  // '.' is intentionally excluded from the character class: it isn't a valid
+  // handle char, so a trailing sentence dot ("@lens/0xjavi.") naturally stops
+  // the match at the handle. Underscores/hyphens ARE valid and are kept, so
+  // handles like "kofi_" survive intact.
+  const matches = content.match(/@lens\/([a-z0-9_-]+)/gi)
   if (!matches) return []
   return matches
-    .map((m) =>
-      m
-        .replace(/@lens\//i, "")
-        .toLowerCase()
-        // Trailing "." / "-" / "_" is sentence punctuation, not part of the
-        // handle — "@lens/0xjavi." must resolve to "0xjavi".
-        .replace(/^[._-]+|[._-]+$/g, "")
-    )
+    .map((m) => m.replace(/@lens\//i, "").toLowerCase())
     .filter(Boolean)
 }
 
