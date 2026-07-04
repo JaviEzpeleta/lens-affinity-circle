@@ -108,28 +108,48 @@ function extractHandles(content: string | null | undefined): string[] {
   return matches.map((m) => m.replace(/@lens\//i, "").toLowerCase())
 }
 
-/** Minimal GraphQL POST helper against the Lens endpoint. */
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+/**
+ * Minimal GraphQL POST helper against the Lens endpoint, with a couple of
+ * retries on transient failures (network blips, 429/5xx). Legitimate GraphQL
+ * errors and 4xx (other than 429) fail fast — retrying them is pointless.
+ */
 async function lensQuery<T>(
   query: string,
-  variables: Record<string, unknown> = {}
+  variables: Record<string, unknown> = {},
+  attempts = 3
 ): Promise<T> {
-  const res = await fetch(LENS_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables }),
-    // We do our own caching via unstable_cache; don't double-cache at fetch level.
-    cache: "no-store",
-  })
+  let lastErr: unknown
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(LENS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
+        // We cache via unstable_cache; don't double-cache at the fetch level.
+        cache: "no-store",
+      })
 
-  if (!res.ok) {
-    throw new Error(`Lens API responded ${res.status}`)
-  }
+      // 429 / 5xx are transient — back off and retry.
+      if (res.status === 429 || res.status >= 500) {
+        throw new Error(`Lens API responded ${res.status}`)
+      }
+      if (!res.ok) {
+        throw new Error(`Lens API responded ${res.status}`)
+      }
 
-  const json = await res.json()
-  if (json.errors?.length) {
-    throw new Error(`Lens API error: ${json.errors[0]?.message ?? "unknown"}`)
+      const json = await res.json()
+      if (json.errors?.length) {
+        throw new Error(`Lens API error: ${json.errors[0]?.message ?? "unknown"}`)
+      }
+      return json.data as T
+    } catch (err) {
+      lastErr = err
+      if (i < attempts - 1) await sleep(250 * (i + 1))
+    }
   }
-  return json.data as T
+  throw lastErr
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -176,7 +196,15 @@ export async function resolveAccount(handle: string): Promise<CircleProfile> {
   const localName = sanitizeHandle(handle)
   if (!localName) throw new LensNotFoundError(handle)
 
-  const data = await lensQuery<AccountQueryResult>(ACCOUNT_QUERY, { localName })
+  // The API very occasionally returns a null account under load even though the
+  // handle exists (a 200 with no error). Try once more before giving up so a
+  // valid handle never gets a spurious "not found".
+  let data = await lensQuery<AccountQueryResult>(ACCOUNT_QUERY, { localName })
+  if (!data.account) {
+    await sleep(300)
+    data = await lensQuery<AccountQueryResult>(ACCOUNT_QUERY, { localName })
+  }
+
   const account = data.account
   if (!account || !account.username) {
     throw new LensNotFoundError(localName)

@@ -2,7 +2,7 @@
 
 Type a **Lens** handle and watch its _Circle of Affinity_ bloom — an interactive,
 force-directed graph of the accounts that handle **mentions, comments on, and
-reposts** the most over the last 30 days.
+reposts** the most over their last 90 days of activity.
 
 > Open-sourced from [Lensie](https://lensie.xyz) as a tiny, standalone, and
 > credential-free app. No login, no wallet, no database.
