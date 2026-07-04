@@ -118,7 +118,7 @@ export default function CirclePage({
           className="inline-flex items-center gap-2 text-sm text-[var(--color-ink-muted)] transition hover:text-[var(--color-ink)]"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span className="text-affinity-gradient font-semibold">Circle of Affinity</span>
+          <span className="font-display font-medium text-[var(--color-ink)]">Circle of Affinity</span>
         </Link>
 
         {status === "ok" && (

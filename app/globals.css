@@ -1,69 +1,82 @@
 @import "tailwindcss";
 
 /*
- * Circle of Affinity — theme-aware cosmic palette.
+ * Circle of Affinity — editorial "paper" theme.
  *
- * next-themes toggles `class="dark"` / `class="light"` on <html> based on the
- * OS preference. Light is the :root default; `.dark` overrides the surfaces and
- * text. The brand gradient (amber→rose→violet→cyan) is shared by both themes.
+ * The front door is deliberately quiet: warm off-white paper, a high-contrast
+ * serif display face (Fraunces), a clean grotesque for UI (Inter), thin ink
+ * hairlines and a single indigo accent. No gradients on the chrome.
  *
- * The graph itself sits on its own permanently-dark "stage" (the circle page
- * pins `class="dark"` on that card), so the bright nodes always pop and the
- * exported PNG looks the same regardless of the viewer's theme.
+ * next-themes toggles `class="dark"` / `class="light"` on <html>. Light is the
+ * :root default; `.dark` swaps the paper for warm near-black. The colourful
+ * force graph on the circle page is its OWN permanently-dark "stage" (that card
+ * pins `class="dark"`), and its node colours are hardcoded in the component —
+ * so the exported PNG looks identical regardless of the viewer's theme.
  */
 
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, "Iowan Old Style", Georgia,
+    "Times New Roman", serif;
   --radius-xl2: 1.25rem;
 }
 
 :root {
   color-scheme: light;
 
-  /* Brand — the affinity gradient, identical in both themes */
-  --color-violet: #8b5cf6;
-  --color-violet-deep: #7c3aed;
+  /* Accent — a single deep indigo, used sparingly */
+  --color-accent: #3a3ad9;
+  --color-accent-strong: #2f2fb8;
+  --color-accent-soft: #edecfb;
+  --color-node: #3b4de0;
+
+  /* Kept for the force graph / circle page chrome */
+  --color-violet: #3a3ad9;
+  --color-violet-deep: #2f2fb8;
   --color-cyan: #0891b2;
   --color-amber: #f59e0b;
   --color-rose: #fb7185;
 
-  /* Light surfaces */
-  --color-void: #f7f6fc;
-  --color-abyss: #efedf9;
+  /* Paper surfaces */
+  --color-void: #f6f5f1;
+  --color-abyss: #efeee8;
   --color-surface: #ffffff;
-  --color-surface-2: #f3f1fb;
-  --color-border: #e2ddf1;
-  --color-border-soft: #ebe8f6;
+  --color-surface-2: #f1f0ea;
+  --color-border: #e3e0d7;
+  --color-border-soft: #ece9e1;
 
-  /* Light text */
-  --color-ink: #17131f;
-  --color-ink-soft: #423b57;
-  --color-ink-muted: #6f6790;
+  /* Ink */
+  --color-ink: #17161a;
+  --color-ink-soft: #46443f;
+  --color-ink-muted: #86837a;
 }
 
 .dark {
   color-scheme: dark;
 
-  /* Brand pops a touch brighter on dark */
-  --color-violet: #a78bfa;
-  --color-violet-deep: #7c3aed;
+  --color-accent: #7d80ff;
+  --color-accent-strong: #6366f1;
+  --color-accent-soft: #1c1b3a;
+  --color-node: #7d80ff;
+
+  --color-violet: #7d80ff;
+  --color-violet-deep: #6366f1;
   --color-cyan: #22d3ee;
   --color-amber: #fbbf24;
   --color-rose: #fb7185;
 
-  /* Dark surfaces */
-  --color-void: #07060d;
-  --color-abyss: #0c0a17;
-  --color-surface: #14111f;
-  --color-surface-2: #1c1830;
-  --color-border: #2a2540;
-  --color-border-soft: #211d33;
+  /* Warm near-black paper */
+  --color-void: #0e0e10;
+  --color-abyss: #141416;
+  --color-surface: #1a1a1c;
+  --color-surface-2: #212123;
+  --color-border: #2c2c2f;
+  --color-border-soft: #242426;
 
-  /* Dark text */
-  --color-ink: #f5f3ff;
-  --color-ink-soft: #c4bfe0;
-  --color-ink-muted: #8b84ad;
+  --color-ink: #f4f3ef;
+  --color-ink-soft: #c8c6bf;
+  --color-ink-muted: #8b897f;
 }
 
 html,
@@ -76,20 +89,7 @@ body {
 
 body {
   min-height: 100dvh;
-  background-attachment: fixed;
-  /* Soft aurora — gentle wash on light */
-  background-image:
-    radial-gradient(60% 50% at 15% 0%, rgba(124, 58, 237, 0.1), transparent 70%),
-    radial-gradient(55% 45% at 92% 8%, rgba(8, 145, 178, 0.08), transparent 70%),
-    radial-gradient(70% 60% at 50% 110%, rgba(251, 113, 133, 0.06), transparent 70%);
-}
-
-.dark body {
-  /* Richer aurora on the dark void */
-  background-image:
-    radial-gradient(60% 50% at 15% 0%, rgba(124, 58, 237, 0.18), transparent 70%),
-    radial-gradient(55% 45% at 92% 8%, rgba(34, 211, 238, 0.12), transparent 70%),
-    radial-gradient(70% 60% at 50% 110%, rgba(251, 113, 133, 0.08), transparent 70%);
+  font-family: var(--font-sans);
 }
 
 /* Thin, theme-matched scrollbars */
@@ -106,37 +106,29 @@ body {
   border-radius: 999px;
 }
 
-/* Signature gradient text */
-.text-affinity-gradient {
-  background: linear-gradient(
-    100deg,
-    var(--color-amber),
-    var(--color-rose) 35%,
-    var(--color-violet) 70%,
-    var(--color-cyan)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+/* Elegant serif display face */
+.font-display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-/* Glassy panel — light by default, deep on dark */
+/*
+ * Legacy gradient wordmark — still referenced by the circle page's back-link.
+ * Redefined here as solid ink so the whole product reads as one quiet system.
+ */
+.text-affinity-gradient {
+  color: var(--color-ink);
+}
+
+/* Clean card — flat surface, hairline border (no glass, no gradient) */
 .panel {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.72),
-    rgba(243, 241, 251, 0.6)
-  );
-  border: 1px solid var(--color-border-soft);
-  backdrop-filter: blur(12px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 .dark .panel {
-  background: linear-gradient(
-    180deg,
-    rgba(28, 24, 48, 0.7),
-    rgba(20, 17, 31, 0.7)
-  );
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 /* Content entrance */
@@ -151,7 +143,7 @@ body {
   }
 }
 .animate-rise {
-  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes float-slow {
@@ -160,16 +152,35 @@ body {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
 }
 .animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+/* Slow orbital drift for the hero motif's node ring */
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-orbit {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: orbit-spin 40s linear infinite;
+}
+.animate-orbit-reverse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: orbit-spin 55s linear infinite reverse;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-rise,
-  .animate-float-slow {
+  .animate-float-slow,
+  .animate-orbit,
+  .animate-orbit-reverse {
     animation: none;
   }
 }

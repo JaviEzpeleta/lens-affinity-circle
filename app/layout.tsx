@@ -1,6 +1,21 @@
 import type { Metadata, Viewport } from "next"
+import { Fraunces, Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/ThemeProvider"
+
+// Editorial display serif for the wordmark + headlines.
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+})
+
+// Clean grotesque for all UI / body copy.
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
 
 const title = "Circle of Affinity — Lens"
 const description =
@@ -28,7 +43,7 @@ export const metadata: Metadata = {
         url:
           "data:image/svg+xml," +
           encodeURIComponent(
-            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="0.5" stop-color="#a78bfa"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><circle cx="16" cy="16" r="7" fill="url(#g)"/><circle cx="26" cy="9" r="3" fill="#a78bfa"/><circle cx="7" cy="24" r="3" fill="#22d3ee"/><circle cx="25" cy="24" r="2.4" fill="#fb7185"/></svg>`
+            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="4.5" fill="none" stroke="#17161a" stroke-width="1.6"/><circle cx="16" cy="5" r="2.2" fill="#3b4de0"/><circle cx="25.5" cy="10.5" r="2.2" fill="#17161a"/><circle cx="25.5" cy="21.5" r="2.2" fill="#3b4de0"/><circle cx="16" cy="27" r="2.2" fill="#17161a"/><circle cx="6.5" cy="21.5" r="2.2" fill="#3b4de0"/><circle cx="6.5" cy="10.5" r="2.2" fill="#17161a"/></svg>`
           ),
       },
     ],
@@ -37,8 +52,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f6fc" },
-    { media: "(prefers-color-scheme: dark)", color: "#07060d" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f5f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e0e10" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -50,7 +65,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${fraunces.variable} ${inter.variable}`}
+    >
       <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"

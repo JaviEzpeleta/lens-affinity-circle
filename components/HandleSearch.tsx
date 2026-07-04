@@ -53,7 +53,7 @@ export function HandleSearch({
           e.preventDefault();
           go(value);
         }}
-        className="group relative flex items-center gap-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-abyss)]/80 p-2 shadow-2xl backdrop-blur transition focus-within:border-[var(--color-violet)]"
+        className="group relative flex items-center gap-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-2 shadow-sm transition focus-within:border-[var(--color-accent)] focus-within:ring-4 focus-within:ring-[var(--color-accent)]/10"
       >
         <span className="pl-3 text-lg font-medium text-[var(--color-ink-muted)] select-none">
           @
@@ -74,11 +74,10 @@ export function HandleSearch({
         />
         <button
           type="submit"
-          disabled={
-            pending ||
-            !sanitizeHandle(value)
-          }
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[var(--color-violet-deep)] to-[var(--color-violet)] px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 sm:px-5"
+          // Only truly disabled while a lookup is in flight — an empty field
+          // keeps the CTA vivid; `go` no-ops on an invalid handle.
+          disabled={pending}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--color-accent)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--color-accent-strong)] disabled:cursor-wait disabled:opacity-70 sm:px-5"
         >
           {pending ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -106,7 +105,7 @@ export function HandleSearch({
             key={h}
             onClick={() => go(h)}
             disabled={pending}
-            className="rounded-full border border-[var(--color-border-soft)] bg-[var(--color-surface)]/60 px-3 py-1 text-xs text-[var(--color-ink-soft)] transition hover:border-[var(--color-violet)] hover:text-[var(--color-ink)] disabled:opacity-50"
+            className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs text-[var(--color-ink-soft)] transition hover:border-[var(--color-accent)] hover:text-[var(--color-ink)] disabled:opacity-50"
           >
             @{h}
           </button>
