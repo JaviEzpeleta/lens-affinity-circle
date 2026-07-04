@@ -63,6 +63,7 @@ export function AffinityCircleGraph({ data, size }: Props) {
     const centerRadius = Math.max(38, width * 0.11)
     const minRadius = Math.max(12, width * 0.03)
     const maxRadius = Math.max(24, width * 0.072)
+    const radialDistance = width * 0.32
 
     const friends = data.friends
     const counts = friends.map((f) => f.count)
@@ -107,6 +108,16 @@ export function AffinityCircleGraph({ data, size }: Props) {
         fill2: deep,
         ring: light,
       }
+    })
+
+    // Seed friends evenly on a ring around the center. D3 otherwise starts
+    // nodes near the (0,0) corner, which — with a pinned center — settles into
+    // a lopsided clump. An even angular seed gives a balanced orbit.
+    friendNodes.forEach((n, i) => {
+      const angle = (i / friendNodes.length) * Math.PI * 2 - Math.PI / 2
+      const jitter = 0.82 + (((i * 41) % 30) / 100) // deterministic 0.82–1.12
+      n.x = width / 2 + Math.cos(angle) * radialDistance * jitter
+      n.y = height / 2 + Math.sin(angle) * radialDistance * jitter
     })
 
     const nodes = [centerNode, ...friendNodes]
@@ -157,7 +168,6 @@ export function AffinityCircleGraph({ data, size }: Props) {
     centerNode.fx = width / 2
     centerNode.fy = height / 2
 
-    const radialDistance = width * 0.32
     const simulation = d3
       .forceSimulation(nodes as d3.SimulationNodeDatum[])
       .force("center", d3.forceCenter(width / 2, height / 2).strength(0.06))
