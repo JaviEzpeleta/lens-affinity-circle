@@ -1,35 +1,57 @@
-"use client"
+"use client";
 
-import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowRight, Loader2, Sparkles } from "lucide-react"
-import { sanitizeHandle } from "@/lib/lens"
+import {
+  useState,
+  useTransition,
+} from "react";
+import { useRouter } from "next/navigation";
+import {
+  ArrowRight,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
+import { sanitizeHandle } from "@/lib/lens";
 
-const EXAMPLES = ["0xjavi", "stani", "lens", "carlosbeltran", "wagmi"]
+const EXAMPLES = [
+  "0xmrvinyl",
+  "kipto",
+  "agentino",
+  "dankshard",
+  "sydney_bro",
+];
 
 interface Props {
   /** Prefill the input (used on the circle page's inline search). */
-  initial?: string
-  autoFocus?: boolean
+  initial?: string;
+  autoFocus?: boolean;
 }
 
-export function HandleSearch({ initial = "", autoFocus = false }: Props) {
-  const router = useRouter()
-  const [value, setValue] = useState(initial)
-  const [pending, startTransition] = useTransition()
+export function HandleSearch({
+  initial = "",
+  autoFocus = false,
+}: Props) {
+  const router = useRouter();
+  const [value, setValue] =
+    useState(initial);
+  const [pending, startTransition] =
+    useTransition();
 
   const go = (raw: string) => {
-    const handle = sanitizeHandle(raw)
-    if (!handle) return
-    startTransition(() => router.push(`/circle/${encodeURIComponent(handle)}`))
-  }
+    const handle = sanitizeHandle(raw);
+    if (!handle) return;
+    startTransition(() =>
+      router.push(
+        `/circle/${encodeURIComponent(handle)}`,
+      ),
+    );
+  };
 
   return (
     <div className="w-full">
       <form
         onSubmit={(e) => {
-          e.preventDefault()
-          go(value)
+          e.preventDefault();
+          go(value);
         }}
         className="group relative flex items-center gap-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-abyss)]/80 p-2 shadow-2xl backdrop-blur transition focus-within:border-[var(--color-violet)]"
       >
@@ -39,7 +61,9 @@ export function HandleSearch({ initial = "", autoFocus = false }: Props) {
         <input
           autoFocus={autoFocus}
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) =>
+            setValue(e.target.value)
+          }
           placeholder="lens handle…"
           spellCheck={false}
           autoCapitalize="none"
@@ -50,15 +74,22 @@ export function HandleSearch({ initial = "", autoFocus = false }: Props) {
         />
         <button
           type="submit"
-          disabled={pending || !sanitizeHandle(value)}
+          disabled={
+            pending ||
+            !sanitizeHandle(value)
+          }
           className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[var(--color-violet-deep)] to-[var(--color-violet)] px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 sm:px-5"
         >
           {pending ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <>
-              <span className="hidden sm:inline">Reveal circle</span>
-              <span className="sm:hidden">Go</span>
+              <span className="hidden sm:inline">
+                Reveal circle
+              </span>
+              <span className="sm:hidden">
+                Go
+              </span>
               <ArrowRight className="h-4 w-4" />
             </>
           )}
@@ -67,7 +98,8 @@ export function HandleSearch({ initial = "", autoFocus = false }: Props) {
 
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
         <span className="inline-flex items-center gap-1 text-xs text-[var(--color-ink-muted)]">
-          <Sparkles className="h-3 w-3" /> Try
+          <Sparkles className="h-3 w-3" />{" "}
+          Try
         </span>
         {EXAMPLES.map((h) => (
           <button
@@ -81,5 +113,5 @@ export function HandleSearch({ initial = "", autoFocus = false }: Props) {
         ))}
       </div>
     </div>
-  )
+  );
 }
