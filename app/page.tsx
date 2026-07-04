@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { HandleSearch } from "@/components/HandleSearch"
 import {
   MessageCircle,
@@ -139,12 +140,12 @@ const FAQS = [
 function Nav() {
   return (
     <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
-      <a href="/" className="flex items-center gap-2.5">
+      <Link href="/" className="flex items-center gap-2.5">
         <LogoMark className="h-7 w-7 text-[var(--color-ink)]" />
         <span className="font-display text-lg font-medium tracking-tight text-[var(--color-ink)]">
           Circle of Affinity
         </span>
-      </a>
+      </Link>
 
       <nav className="hidden items-center gap-8 text-sm text-[var(--color-ink-soft)] md:flex">
         <a href="#how-it-works" className="transition hover:text-[var(--color-ink)]">
