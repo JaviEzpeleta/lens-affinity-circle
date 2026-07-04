@@ -8,8 +8,26 @@ reposts** the most over their last 90 days of activity.
 > credential-free app. No login, no wallet, no database.
 
 <p align="center">
-  <em>the user in the center · friends orbiting · size = affinity</em>
+  <img src="docs/circle-agentino.png" alt="Circle of Affinity for @agentino — the account at the center with its closest connections orbiting, node size scaled by affinity" width="760">
 </p>
+<p align="center">
+  <sub><em>@agentino's circle — the account at the center, friends orbiting, node size = affinity.</em></sub>
+</p>
+
+## A handle in, a circle out
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/landing.png" alt="Circle of Affinity landing page with a Lens handle search box">
+      <p align="center"><sub>Type any Lens handle to begin.</sub></p>
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/circle-sydney.png" alt="Circle of Affinity for @sydney_bro">
+      <p align="center"><sub>@sydney_bro's circle, hover · drag · export as PNG.</sub></p>
+    </td>
+  </tr>
+</table>
 
 ## How it works
 
