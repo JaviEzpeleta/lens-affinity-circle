@@ -376,17 +376,16 @@ interface FriendAccount {
   metadata: { name: string | null; picture: string | null } | null
 }
 
-async function resolveFriendAccounts(
-  handles: string[]
-): Promise<Map<string, { address: string; name: string | null; avatarUrl: string | null }>> {
-  const result = new Map<
-    string,
-    { address: string; name: string | null; avatarUrl: string | null }
-  >()
-  if (handles.length === 0) return result
+// The Lens API rejects any query with more than 10 top-level aliases, so we
+// resolve friends in chunks of this size (run concurrently).
+const ALIAS_CHUNK = 10
 
-  // Build a single aliased query: f0, f1, ... — one round-trip for all friends.
-  const fields = handles
+type ResolvedFriend = { address: string; name: string | null; avatarUrl: string | null }
+
+async function resolveFriendChunk(
+  chunk: string[]
+): Promise<Array<[string, ResolvedFriend]>> {
+  const fields = chunk
     .map(
       (h, i) => `
     f${i}: account(request: { username: { localName: "${sanitizeHandle(h)}" } }) {
@@ -398,25 +397,44 @@ async function resolveFriendAccounts(
     .join("\n")
 
   const query = `query BatchFriends {${fields}\n}`
+  const entries: Array<[string, ResolvedFriend]> = []
 
   try {
     const data = await lensQuery<Record<string, FriendAccount | null>>(query)
-    handles.forEach((h, i) => {
+    chunk.forEach((h, i) => {
       const acc = data[`f${i}`]
       if (acc?.username) {
-        result.set(h.toLowerCase(), {
-          address: acc.address,
-          name: acc.metadata?.name ?? null,
-          avatarUrl: normalizeAvatarUrl(acc.metadata?.picture),
-        })
+        entries.push([
+          h.toLowerCase(),
+          {
+            address: acc.address,
+            name: acc.metadata?.name ?? null,
+            avatarUrl: normalizeAvatarUrl(acc.metadata?.picture),
+          },
+        ])
       }
     })
   } catch (err) {
-    // If the batch fails we still return the circle, just without avatars.
-    console.error("⚠️ Friend avatar batch failed:", err)
+    // A failed chunk just means those friends render with initial fallbacks.
+    console.error("⚠️ Friend avatar chunk failed:", err)
   }
 
-  return result
+  return entries
+}
+
+async function resolveFriendAccounts(
+  handles: string[]
+): Promise<Map<string, ResolvedFriend>> {
+  if (handles.length === 0) return new Map()
+
+  const chunks: string[][] = []
+  for (let i = 0; i < handles.length; i += ALIAS_CHUNK) {
+    chunks.push(handles.slice(i, i + ALIAS_CHUNK))
+  }
+
+  // One round-trip per chunk of 10, all in flight at once.
+  const results = await Promise.all(chunks.map(resolveFriendChunk))
+  return new Map(results.flat())
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
