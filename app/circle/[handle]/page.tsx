@@ -11,6 +11,8 @@ import {
   Sparkles,
   FileText,
   CalendarRange,
+  Eye,
+  EyeOff,
 } from "lucide-react"
 import type { CircleData } from "@/lib/lens"
 import { proxied, initial } from "@/lib/image"
@@ -38,6 +40,9 @@ export default function CirclePage({
   // Ref around the shareable card, for PNG export.
   const captureRef = useRef<HTMLDivElement>(null)
   const [exporting, setExporting] = useState(false)
+
+  // Whether @handle labels show on the circle (and in the exported PNG).
+  const [showLabels, setShowLabels] = useState(true)
 
   useEffect(() => {
     let cancelled = false
@@ -122,18 +127,35 @@ export default function CirclePage({
         </Link>
 
         {status === "ok" && (
-          <button
-            onClick={handleDownload}
-            disabled={exporting}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3.5 py-2 text-sm font-medium text-[var(--color-ink-soft)] transition hover:border-[var(--color-violet)] hover:text-[var(--color-ink)] disabled:opacity-50"
-          >
-            {exporting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4" />
-            )}
-            <span className="hidden sm:inline">Download PNG</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowLabels((v) => !v)}
+              aria-pressed={showLabels}
+              title={showLabels ? "Hide handles" : "Show handles"}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3.5 py-2 text-sm font-medium text-[var(--color-ink-soft)] transition hover:border-[var(--color-violet)] hover:text-[var(--color-ink)]"
+            >
+              {showLabels ? (
+                <Eye className="h-4 w-4" />
+              ) : (
+                <EyeOff className="h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">
+                {showLabels ? "Handles on" : "Handles off"}
+              </span>
+            </button>
+            <button
+              onClick={handleDownload}
+              disabled={exporting}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/70 px-3.5 py-2 text-sm font-medium text-[var(--color-ink-soft)] transition hover:border-[var(--color-violet)] hover:text-[var(--color-ink)] disabled:opacity-50"
+            >
+              {exporting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">Download PNG</span>
+            </button>
+          </div>
         )}
       </div>
 
@@ -156,7 +178,7 @@ export default function CirclePage({
           >
             <ProfileHeader data={data} />
             <div ref={graphWrapRef} className="mt-4 flex justify-center">
-              <AffinityCircleGraph data={data} size={size} />
+              <AffinityCircleGraph data={data} size={size} showLabels={showLabels} />
             </div>
             <p className="mt-2 text-center text-[11px] text-[var(--color-ink-muted)]/70">
               circle-of-affinity · lens

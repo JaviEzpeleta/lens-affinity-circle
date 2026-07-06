@@ -37,6 +37,8 @@ interface Props {
   data: CircleData
   /** Clamped square size in px for the SVG (also the simulation space). */
   size: number
+  /** Show the @handle labels under each node. Toggling never restarts the sim. */
+  showLabels: boolean
 }
 
 /**
@@ -47,10 +49,15 @@ interface Props {
  * rank. Physics: charge repulsion, collision, plus live mouse-repulsion and
  * drag. Clicking a friend dives into *their* circle.
  */
-export function AffinityCircleGraph({ data, size }: Props) {
+export function AffinityCircleGraph({ data, size, showLabels }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
   const router = useRouter()
   const [hover, setHover] = useState<HoverInfo | null>(null)
+
+  // Held across renders so the label-visibility effect can update opacity
+  // without tearing down and re-seeding the force simulation.
+  const labelSelRef = useRef<d3.Selection<SVGTextElement, SimNode, SVGGElement, unknown> | null>(null)
+  const labelThreshRef = useRef(0)
 
   useEffect(() => {
     if (!svgRef.current) return
@@ -244,8 +251,12 @@ export function AffinityCircleGraph({ data, size }: Props) {
       }
     })
 
-    // Labels below nodes (kept for the exported PNG, hidden on tiny friends)
-    node
+    // Labels below nodes (kept for the exported PNG, hidden on tiny friends).
+    // The tiny-friend cutoff is stashed in a ref so the toggle effect can honor
+    // it without recomputing radii.
+    const labelThreshold = minRadius * 1.15
+    labelThreshRef.current = labelThreshold
+    const labels = node
       .append("text")
       .attr("text-anchor", "middle")
       .attr("y", (d) => d.radius + (d.isCenter ? 20 : 14))
@@ -253,11 +264,12 @@ export function AffinityCircleGraph({ data, size }: Props) {
       .attr("font-weight", (d) => (d.isCenter ? 700 : 500))
       .attr("fill", (d) => (d.isCenter ? "#fcd34d" : "#c4bfe0"))
       .attr("pointer-events", "none")
-      .attr("opacity", (d) => (d.isCenter || d.radius > minRadius * 1.15 ? 1 : 0))
+      .attr("opacity", (d) => (showLabels && (d.isCenter || d.radius > labelThreshold) ? 1 : 0))
       .text((d) => {
         const h = d.handle
         return h.length > 14 ? h.slice(0, 12) + "…" : h
       })
+    labelSelRef.current = labels
 
     // ── Interactions ─────────────────────────────────────────────────────
     const svgRect = () => svgRef.current!.getBoundingClientRect()
@@ -351,7 +363,24 @@ export function AffinityCircleGraph({ data, size }: Props) {
     return () => {
       simulation.stop()
     }
+    // `showLabels` is intentionally omitted: it's reconciled by the effect below
+    // so toggling never tears down and re-seeds the simulation (the layout must
+    // stay put so users can A/B "cleaner with or without handles").
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, size, router])
+
+  // Toggle @handle labels in place — no simulation restart, same layout.
+  useEffect(() => {
+    const labels = labelSelRef.current
+    if (!labels) return
+    labels
+      .interrupt()
+      .transition()
+      .duration(200)
+      .attr("opacity", (d) =>
+        showLabels && (d.isCenter || d.radius > labelThreshRef.current) ? 1 : 0
+      )
+  }, [showLabels])
 
   return (
     <div className="relative select-none" style={{ width: size, maxWidth: "100%" }}>
